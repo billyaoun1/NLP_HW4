@@ -125,8 +125,19 @@ def load_word2vec(filename: str) -> Word2Vec:
 # can use it in the other tasks easily.
 
 # NOT PROVIDED
-# After you are happy with this function (Task 2), copy + paste it into the bottom of 
+# After you are happy with this function (Task 2), copy + paste it into the bottom of
 # your neurallm_utils.py file
 # You'll need it for the next task!
 def create_embedder(raw_embeddings: Word2Vec) -> torch.nn.Embedding:
-    pass
+    weights = torch.FloatTensor(raw_embeddings.wv.vectors)
+
+    embedder = torch.nn.Embedding.from_pretrained(weights)
+
+    embedder.token_to_index = {
+        token: idx for idx, token in enumerate(raw_embeddings.wv.index_to_key)
+    }
+    embedder.index_to_token = {
+        idx: token for token, idx in embedder.token_to_index.items()
+    }
+
+    return embedder
